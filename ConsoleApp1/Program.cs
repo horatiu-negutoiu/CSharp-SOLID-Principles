@@ -22,13 +22,14 @@
     interface ITransaction
     {
         void OutputTransaction();
+        void FoodTransactionItemizedListOutput();
+        void TransportationTransactionToggleType();
     }
 
     class Transaction : ITransaction
     {
         public int id;
         public double amount;
-        public string type;
         public Writer writer;
 
         public Transaction(int id, double amount)
@@ -40,37 +41,79 @@
 
         public void OutputTransaction()
         {
-            writer.WriteTransaction($"Transaction: ${this.amount}");
+            writer.Write($"Transaction: ${this.amount}");
+        }
+
+        public void FoodTransactionItemizedListOutput()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void TransportationTransactionToggleType()
+        {
+            throw new NotImplementedException();
         }
     }
 
     class FoodTransaction : Transaction, ITransaction
     {
+        public List<string> itemizedList;
+
         public FoodTransaction(int id, double amount) : base(id, amount)
         {
             this.id = id;
             this.amount = amount;
             this.writer = new Writer();
+            this.itemizedList = new List<string>();
         }
 
         public new void OutputTransaction()
         {
-            writer.WriteTransaction($"Food: ${this.amount}");
+            writer.Write($"Food: ${this.amount}");
+        }
+
+        public new void FoodTransactionItemizedListOutput()
+        {
+            foreach (string item in itemizedList)
+            {
+                writer.Write($"Item: {item}");
+            }
+        }
+
+        public new void TransportationTransactionToggleType()
+        {
+            throw new NotImplementedException();
         }
     }
 
     class TransportationTransaction : Transaction, ITransaction
     {
+        public TRANSPORTATION_TYPE transportationType;
+
         public TransportationTransaction(int id, double amount) : base(id, amount)
         {
             this.id = id;
             this.amount = amount;
             this.writer = new Writer();
+            this.transportationType = TRANSPORTATION_TYPE.PUBLIC;
         }
 
         public new void OutputTransaction()
         {
-            writer.WriteTransaction($"Transportation: ${this.amount}");
+            writer.Write($"Transportation: ${this.amount}");
+        }
+
+        public new void FoodTransactionItemizedListOutput()
+        {
+            throw new NotImplementedException();
+        }
+
+        public new void TransportationTransactionToggleType()
+        {
+            if (this.transportationType == TRANSPORTATION_TYPE.PUBLIC)
+                this.transportationType = TRANSPORTATION_TYPE.PRIVATE;
+            else
+                this.transportationType = TRANSPORTATION_TYPE.PUBLIC;
         }
     }
 
@@ -85,20 +128,36 @@
 
         public new void OutputTransaction()
         {
-            writer.WriteTransaction($"Rent: ${this.amount}");
+            writer.Write($"Rent: ${this.amount}");
+        }
+
+        public new void FoodTransactionItemizedListOutput()
+        {
+            throw new NotImplementedException();
+        }
+
+        public new void TransportationTransactionToggleType()
+        {
+            throw new NotImplementedException();
         }
     }
 
     class Writer
     {
-        public void WriteTransaction(string transactionEntry)
+        public void Write(string entry)
         {
-            this.WriteTransactionToConsole(transactionEntry);
+            this.WriteToConsole(entry);
         }
 
-        public void WriteTransactionToConsole(string transactionEntry)
+        public void WriteToConsole(string entry)
         {
-            Console.WriteLine($"{transactionEntry}");
+            Console.WriteLine($"{entry}");
         }
     }
+
+    public enum TRANSPORTATION_TYPE
+    {
+        PUBLIC,
+        PRIVATE
+    };
 }
