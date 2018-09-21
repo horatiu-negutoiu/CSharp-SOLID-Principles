@@ -40,7 +40,7 @@
 
         public void OutputTransaction()
         {
-            writer.WriteTransaction(this);
+            writer.WriteTransaction($"Transaction: ${this.amount}");
         }
     }
 
@@ -50,8 +50,12 @@
         {
             this.id = id;
             this.amount = amount;
-            this.type = "food";
             this.writer = new Writer();
+        }
+
+        public new void OutputTransaction()
+        {
+            writer.WriteTransaction($"Food: ${this.amount}");
         }
     }
 
@@ -61,28 +65,40 @@
         {
             this.id = id;
             this.amount = amount;
-            this.type = "transportation";
             this.writer = new Writer();
+        }
+
+        public new void OutputTransaction()
+        {
+            writer.WriteTransaction($"Transportation: ${this.amount}");
+        }
+    }
+
+    class RentTransaction : Transaction, ITransaction
+    {
+        public RentTransaction(int id, double amount) : base(id, amount)
+        {
+            this.id = id;
+            this.amount = amount;
+            this.writer = new Writer();
+        }
+
+        public new void OutputTransaction()
+        {
+            throw new NotImplementedException("Ask client what to write here.");
         }
     }
 
     class Writer
     {
-        public void WriteTransaction(Transaction transaction)
+        public void WriteTransaction(string transactionEntry)
         {
-            this.WriteTransactionToConsole(transaction);
+            this.WriteTransactionToConsole(transactionEntry);
         }
 
-        public void WriteTransactionToConsole(Transaction transaction)
+        public void WriteTransactionToConsole(string transactionEntry)
         {
-            if (transaction.type == "food")
-            {
-                Console.WriteLine($"Food: ${transaction.amount}");
-            }
-            else if (transaction.type == "transportation")
-            {
-                Console.WriteLine($"Transportation: ${transaction.amount}");
-            }
+            Console.WriteLine($"{transactionEntry}");
         }
     }
 }
