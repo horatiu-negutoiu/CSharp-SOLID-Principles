@@ -85,7 +85,7 @@
 
         public new void OutputTransaction()
         {
-            throw new NotImplementedException("Ask client what to write here.");
+            writer.WriteTransaction($"Rent: ${this.amount}");
         }
     }
 
