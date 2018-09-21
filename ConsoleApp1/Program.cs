@@ -7,9 +7,10 @@
     {
         static void Main(string[] args)
         {
-            Writer writer = new Writer();
+            IWriter writer = new DatabaseWriter();
             Dictionary<int, ITransaction> transactions = new Dictionary<int, ITransaction>();
-            IFoodTransaction foodTransaction = new FoodTransaction(writer, 
+            IFoodTransaction foodTransaction = new FoodTransaction(
+                writer,
                 0,
                 10.40,
                 new List<string> { "water", "soap" });
@@ -18,7 +19,10 @@
                 1,
                 40.00,
                 TRANSPORTATION_TYPE.PRIVATE);
-            IRentTransaction rentTransaction = new RentTransaction(writer, 2, 1000);
+            IRentTransaction rentTransaction = new RentTransaction(
+                writer,
+                2,
+                1000);
 
             transactions.Add(0, foodTransaction);
             transactions.Add(1, transportationTransaction);
@@ -44,9 +48,9 @@
     {
         public int id;
         public double amount;
-        public Writer writer;
+        public IWriter writer;
 
-        public Transaction(Writer writer, int id, double amount)
+        public Transaction(IWriter writer, int id, double amount)
         {
             this.id = id;
             this.amount = amount;
@@ -68,10 +72,10 @@
     {
         public int id;
         public double amount;
-        public Writer writer;
+        public IWriter writer;
         public List<string> itemizedList;
 
-        public FoodTransaction(Writer writer, int id, double amount, List<string> itemizedList)
+        public FoodTransaction(IWriter writer, int id, double amount, List<string> itemizedList)
         {
             this.id = id;
             this.amount = amount;
@@ -102,10 +106,10 @@
     {
         public int id;
         public double amount;
-        public Writer writer;
+        public IWriter writer;
         public TRANSPORTATION_TYPE transportationType;
 
-        public TransportationTransaction(Writer writer, 
+        public TransportationTransaction(IWriter writer,
             int id,
             double amount,
             TRANSPORTATION_TYPE transportationType = TRANSPORTATION_TYPE.PUBLIC)
@@ -139,9 +143,9 @@
     {
         public int id;
         public double amount;
-        public Writer writer;
+        public IWriter writer;
 
-        public RentTransaction(Writer writer, int id, double amount)
+        public RentTransaction(IWriter writer, int id, double amount)
         {
             this.id = id;
             this.amount = amount;
@@ -157,10 +161,14 @@
     interface IWriter
     {
         void Write(string entry);
+    }
+
+    interface IConsoleWriter : IWriter
+    {
         void WriteToConsole(string entry);
     }
 
-    class Writer : IWriter
+    class ConsoleWriter : IConsoleWriter
     {
         public void Write(string entry)
         {
@@ -170,6 +178,24 @@
         public void WriteToConsole(string entry)
         {
             Console.WriteLine($"{entry}");
+        }
+    }
+
+    interface IDatabaseWriter : IWriter
+    {
+        void WriteToDatabase(string entry);
+    }
+
+    class DatabaseWriter : IDatabaseWriter
+    {
+        public void Write(string entry)
+        {
+            this.WriteToDatabase(entry);
+        }
+
+        public void WriteToDatabase(string entry)
+        {
+            // writes the entry to the database
         }
     }
 
