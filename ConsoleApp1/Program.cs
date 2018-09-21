@@ -25,16 +25,31 @@
     {
         public int id;
         public double amount;
+        public Writer writer;
 
         public Transaction(int id, double amount)
         {
             this.id = id;
             this.amount = amount;
+            this.writer = new Writer();
         }
 
         public void OutputTransaction()
         {
-            Console.WriteLine("Transaction [{this.id.ToString()}] - ${this.amount.ToString()}");
+            writer.WriteTransaction(this);
+        }
+    }
+
+    class Writer
+    {
+        public void WriteTransaction(Transaction transaction)
+        {
+            this.WriteTransactionToConsole(transaction);
+        }
+
+        public void WriteTransactionToConsole(Transaction transaction)
+        {
+            Console.WriteLine($"Transaction [{transaction.id.ToString()}] - ${transaction.amount.ToString()}");
         }
     }
 }
