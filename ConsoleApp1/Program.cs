@@ -8,8 +8,21 @@
         static void Main(string[] args)
         {
             Dictionary<int, ITransaction> transactions = new Dictionary<int, ITransaction>();
-            transactions.Add(0, new FoodTransaction(0, 10.40));
-            transactions.Add(1, new TransportationTransaction(1, -5.00));
+            IFoodTransaction foodTransaction = new FoodTransaction(0,
+                10.40,
+                new List<string> { "water", "soap" });
+            ITransportationTransaction transportationTransaction = new TransportationTransaction(
+                1,
+                40.00,
+                TRANSPORTATION_TYPE.PRIVATE);
+            IRentTransaction rentTransaction = new RentTransaction(2, 1000);
+
+            transactions.Add(0, foodTransaction);
+            transactions.Add(1, transportationTransaction);
+            transactions.Add(2, rentTransaction);
+
+            foodTransaction.FoodTransactionItemizedListOutput();
+            transportationTransaction.TransportationTransactionToggleType();
 
             foreach (KeyValuePair<int, ITransaction> transactionEntry in transactions)
             {
@@ -22,8 +35,6 @@
     interface ITransaction
     {
         void OutputTransaction();
-        void FoodTransactionItemizedListOutput();
-        void TransportationTransactionToggleType();
     }
 
     class Transaction : ITransaction
@@ -43,72 +54,70 @@
         {
             writer.Write($"Transaction: ${this.amount}");
         }
-
-        public void FoodTransactionItemizedListOutput()
-        {
-            throw new NotImplementedException();
-        }
-
-        public void TransportationTransactionToggleType()
-        {
-            throw new NotImplementedException();
-        }
     }
 
-    class FoodTransaction : Transaction, ITransaction
+    interface IFoodTransaction : ITransaction
     {
+        void FoodTransactionItemizedListOutput();
+    }
+
+    class FoodTransaction : IFoodTransaction
+    {
+        public int id;
+        public double amount;
+        public Writer writer;
         public List<string> itemizedList;
 
-        public FoodTransaction(int id, double amount) : base(id, amount)
+        public FoodTransaction(int id, double amount, List<string> itemizedList)
         {
             this.id = id;
             this.amount = amount;
             this.writer = new Writer();
-            this.itemizedList = new List<string>();
+            this.itemizedList = itemizedList;
         }
 
-        public new void OutputTransaction()
+        public void OutputTransaction()
         {
             writer.Write($"Food: ${this.amount}");
         }
 
-        public new void FoodTransactionItemizedListOutput()
+        public void FoodTransactionItemizedListOutput()
         {
             foreach (string item in itemizedList)
             {
                 writer.Write($"Item: {item}");
             }
         }
-
-        public new void TransportationTransactionToggleType()
-        {
-            throw new NotImplementedException();
-        }
     }
 
-    class TransportationTransaction : Transaction, ITransaction
+    interface ITransportationTransaction : ITransaction
     {
+        void TransportationTransactionToggleType();
+    }
+
+    class TransportationTransaction : ITransportationTransaction
+    {
+        public int id;
+        public double amount;
+        public Writer writer;
         public TRANSPORTATION_TYPE transportationType;
 
-        public TransportationTransaction(int id, double amount) : base(id, amount)
+        public TransportationTransaction(int id,
+            double amount,
+            TRANSPORTATION_TYPE transportationType = TRANSPORTATION_TYPE.PUBLIC)
         {
             this.id = id;
             this.amount = amount;
             this.writer = new Writer();
-            this.transportationType = TRANSPORTATION_TYPE.PUBLIC;
+            this.transportationType = transportationType;
         }
 
-        public new void OutputTransaction()
+        public void OutputTransaction()
         {
             writer.Write($"Transportation: ${this.amount}");
         }
 
-        public new void FoodTransactionItemizedListOutput()
-        {
-            throw new NotImplementedException();
-        }
-
-        public new void TransportationTransactionToggleType()
+        public void TransportationTransactionToggleType()
         {
             if (this.transportationType == TRANSPORTATION_TYPE.PUBLIC)
                 this.transportationType = TRANSPORTATION_TYPE.PRIVATE;
@@ -117,32 +126,37 @@
         }
     }
 
-    class RentTransaction : Transaction, ITransaction
+    interface IRentTransaction : ITransaction
     {
-        public RentTransaction(int id, double amount) : base(id, amount)
+
+    }
+
+    class RentTransaction : IRentTransaction
+    {
+        public int id;
+        public double amount;
+        public Writer writer;
+
+        public RentTransaction(int id, double amount)
         {
             this.id = id;
             this.amount = amount;
             this.writer = new Writer();
         }
 
-        public new void OutputTransaction()
+        public void OutputTransaction()
         {
             writer.Write($"Rent: ${this.amount}");
         }
-
-        public new void FoodTransactionItemizedListOutput()
-        {
-            throw new NotImplementedException();
-        }
-
-        public new void TransportationTransactionToggleType()
-        {
-            throw new NotImplementedException();
-        }
     }
 
-    class Writer
+    interface IWriter
+    {
+        void Write(string entry);
+        void WriteToConsole(string entry);
+    }
+
+    class Writer : IWriter
     {
         public void Write(string entry)
         {
