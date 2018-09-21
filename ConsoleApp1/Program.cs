@@ -7,15 +7,18 @@
     {
         static void Main(string[] args)
         {
+            Writer writer = new Writer();
             Dictionary<int, ITransaction> transactions = new Dictionary<int, ITransaction>();
-            IFoodTransaction foodTransaction = new FoodTransaction(0,
+            IFoodTransaction foodTransaction = new FoodTransaction(writer, 
+                0,
                 10.40,
                 new List<string> { "water", "soap" });
             ITransportationTransaction transportationTransaction = new TransportationTransaction(
+                writer,
                 1,
                 40.00,
                 TRANSPORTATION_TYPE.PRIVATE);
-            IRentTransaction rentTransaction = new RentTransaction(2, 1000);
+            IRentTransaction rentTransaction = new RentTransaction(writer, 2, 1000);
 
             transactions.Add(0, foodTransaction);
             transactions.Add(1, transportationTransaction);
@@ -43,11 +46,11 @@
         public double amount;
         public Writer writer;
 
-        public Transaction(int id, double amount)
+        public Transaction(Writer writer, int id, double amount)
         {
             this.id = id;
             this.amount = amount;
-            this.writer = new Writer();
+            this.writer = writer;
         }
 
         public void OutputTransaction()
@@ -68,11 +71,11 @@
         public Writer writer;
         public List<string> itemizedList;
 
-        public FoodTransaction(int id, double amount, List<string> itemizedList)
+        public FoodTransaction(Writer writer, int id, double amount, List<string> itemizedList)
         {
             this.id = id;
             this.amount = amount;
-            this.writer = new Writer();
+            this.writer = writer;
             this.itemizedList = itemizedList;
         }
 
@@ -102,13 +105,14 @@
         public Writer writer;
         public TRANSPORTATION_TYPE transportationType;
 
-        public TransportationTransaction(int id,
+        public TransportationTransaction(Writer writer, 
+            int id,
             double amount,
             TRANSPORTATION_TYPE transportationType = TRANSPORTATION_TYPE.PUBLIC)
         {
             this.id = id;
             this.amount = amount;
-            this.writer = new Writer();
+            this.writer = writer;
             this.transportationType = transportationType;
         }
 
@@ -137,11 +141,11 @@
         public double amount;
         public Writer writer;
 
-        public RentTransaction(int id, double amount)
+        public RentTransaction(Writer writer, int id, double amount)
         {
             this.id = id;
             this.amount = amount;
-            this.writer = new Writer();
+            this.writer = writer;
         }
 
         public void OutputTransaction()
